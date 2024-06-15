@@ -148,8 +148,12 @@ public static class RecursionTester {
     /// n &lt;= 0, just return 0.   A loop should not be used.
     /// </summary>
     public static int SumSquaresRecursive(int n) {
-        // TODO Start Problem 1
+        if (n <= 0) {
         return 0;
+    }
+    
+    // Recursive case
+    return n * n + SumSquaresRecursive(n - 1);
     }
 
     /// <summary>
@@ -172,7 +176,18 @@ public static class RecursionTester {
     /// and the length of the letters list).
     /// </summary>
     public static void PermutationsChoose(string letters, int size, string word = "") {
-        // TODO Start Problem 2
+        if (word.Length == size) {
+        Console.WriteLine(word);
+        return;
+    }
+    
+    // Recursive case: iterate over each letter in 'letters' and generate permutations
+    for (int i = 0; i < letters.Length; i++) {
+        // Choose the i-th letter and append it to 'word'
+        char chosenLetter = letters[i];
+        string remainingLetters = letters.Substring(0, i) + letters.Substring(i + 1);
+        PermutationsChoose(remainingLetters, size, word + chosenLetter);
+    }
     }
 
     /// <summary>
@@ -221,37 +236,70 @@ public static class RecursionTester {
     /// until the memoization is implemented.
     /// </summary>
     public static decimal CountWaysToClimb(int s, Dictionary<int, decimal>? remember = null) {
-        // Base Cases
-        if (s == 0)
-            return 0;
-        if (s == 1)
-            return 1;
-        if (s == 2)
-            return 2;
-        if (s == 3)
-            return 4;
-
-        // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
-        return ways;
+    // Initialize the memoization dictionary if not provided
+    if (remember == null) {
+        remember = new Dictionary<int, decimal>();
     }
+    
+    // Base Cases
+    if (s == 0)
+        return 1; // Base case: 1 way to stay at the ground (do nothing)
+    if (s == 1)
+        return 1; // Base case: 1 way to reach the first step
+    if (s == 2)
+        return 2; // Base case: 2 ways to reach the second step
+    if (s == 3)
+        return 4; // Base case: 4 ways to reach the third step
+
+    // Check if the value is already memoized
+    if (remember.ContainsKey(s)) {
+        return remember[s];
+    }
+    
+    // Recursive case: compute and memoize the result
+    decimal ways = CountWaysToClimb(s - 1, remember) +
+                   CountWaysToClimb(s - 2, remember) +
+                   CountWaysToClimb(s - 3, remember);
+    
+    remember[s] = ways; // Memoize the result for future use
+    
+    return ways;
+}
 
     /// <summary>
-    /// #############
-    /// # Problem 4 #
-    /// #############
-    /// A binary string is a string consisting of just 1's and 0's.  For example, 1010111 is 
-    /// a binary string.  If we introduce a wildcard symbol * into the string, we can say that 
-    /// this is now a pattern for multiple binary strings.  For example, 101*1 could be used 
-    /// to represent 10101 and 10111.  A pattern can have more than one * wildcard.  For example, 
-    /// 1**1 would result in 4 different binary strings: 1001, 1011, 1101, and 1111.
-    ///	
-    /// Using recursion, display all possible binary strings for a given pattern.  You might find 
-    /// some of the string functions like IndexOf and [..X] / [X..] to be useful in solving this problem.
-    /// </summary>
-    public static void WildcardBinary(string pattern) {
-        // TODO Start Problem 4
+/// #############
+/// # Problem 4 #
+/// #############
+/// Print all possible binary strings that can be formed by replacing '*' with '0' or '1'.
+/// </summary>
+public static void WildcardBinary(string str)
+{
+    WildcardBinaryHelper(str, 0);
+}
+
+private static void WildcardBinaryHelper(string str, int index)
+{
+    if (index == str.Length)
+    {
+        Console.WriteLine(str);
+        return;
     }
+
+    if (str[index] == '*')
+    {
+        // Replace '*' with '0'
+        str = str.Substring(0, index) + '0' + str.Substring(index + 1);
+        WildcardBinaryHelper(str, index + 1);
+
+        // Replace '*' with '1'
+        str = str.Substring(0, index) + '1' + str.Substring(index + 1);
+        WildcardBinaryHelper(str, index + 1);
+    }
+    else
+    {
+        WildcardBinaryHelper(str, index + 1);
+    }
+}
 
     /// <summary>
     /// Use recursion to Print all paths that start at (0,0) and end at the
